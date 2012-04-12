@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n jmbo_inclusion_tags foundry_tags %} 
+
+{% block content %}
+    <div class="content member-friends">
+	    <div class="foundry-container foundry-listing-vertical-thumbnail">
+	
+	        <div class="title">{% trans "My friends" %}</div>
+	        <div class="items">
+                {% my_friends request.user object_list %}
+	        </div>
+	
+	        {% pager page_obj %}
+	    </div>
+    </div>
+{% endblock %}

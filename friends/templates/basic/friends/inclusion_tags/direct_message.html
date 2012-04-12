@@ -1,0 +1,18 @@
+{% load foundry_tags %}
+
+{% load i18n friends_tags %}
+
+<div class="messages">
+    <div class="message">
+        <div class="header">{% trans "From" %}: {{ object.from_member }} {% trans "To" %}: {{ object.to_member }} {% trans "At" %}: {{ object.created }}</div>
+
+        <p>{{ object.message }}</p>
+
+        <div class="message-actions">
+            <a href="{% url reply-to-direct-message object.id %}">{% trans "Reply" %}</a>
+        </div>
+    </div>
+    {% for message in object.replies.all %}  
+        {% direct_message message %}
+    {% endfor %}
+</div>

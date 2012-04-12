@@ -1,0 +1,39 @@
+{% load i18n %}
+
+{% for object in friends %}
+	<div class="item {% if forloop.first %}first{% endif %} {% if forloop.last %}last{% endif %}">
+	    <a href="{{ object.get_absolute_url }}">
+	        <img src="{{ object.get_thumbnail_LAYER_url }}" class="left" />
+	    </a>
+	    <div class="title">
+	        <a href="{{ object.get_absolute_url }}">{{ object.username }}</a>
+	    </div>
+	    <div class="meta">
+	        <a href="{% url de-friend object.id %}">{% trans "De-friend" %}</a>
+	    </div>
+		{% if object.other_friends %}
+			<div class="friend-finder">
+			    <div class="title">{{ object.username }}{% trans "'s friends:" %}</div>
+			    <div class="items">
+			    {% for friend in object.other_friends %}
+			        <div class="item {% if forloop.first %}first{% endif %} {% if forloop.last %}last{% endif %}">
+				        <a href="{{ friend.get_absolute_url }}">
+				            <img src="{{ friend.get_thumbnail_LAYER_url }}" class="left" />
+				        </a>
+				        <div class="title">
+				            <a href="{{ friend.get_absolute_url }}">{{ friend.username }}</a>
+				        </div>
+				        <div class="meta">
+				            <a href="{% url friend-request friend.id %}">{% trans "Friend" %}</a>
+				        </div>
+			        </div>
+			    {% endfor %}
+			    </div>
+			</div>
+		{% endif %}
+	</div>
+{% empty %}
+   <div>
+       {% trans "You have no friends yet." %}
+   </div>
+{% endfor %}

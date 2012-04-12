@@ -1,0 +1,6 @@
+{% load i18n %}
+
+{% blocktrans %}You have a new friend request from {{ username }}.{% endblocktrans %}
+
+{% trans "To accept the request please follow this link" %}: 
+http://{{ domain }}{% url accept-friend-request memberfriend_id %}

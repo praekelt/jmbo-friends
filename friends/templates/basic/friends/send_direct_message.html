@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+	<div class="content send-direct-message">
+	    <div class="title">{% trans "Send a message" %}</div>
+	    <div class="meta">
+           <div class="friend">
+               <a href="{% url inbox %}">{% trans "Inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
+           </div>
+	    </div>
+    
+        <form action="{% url send-direct-message %}" method="POST" class="foundry-form">
+            {% csrf_token %}
+            {{ form.as_div }}
+            <div class="buttons">
+                <input type="submit" value="{% trans "Send" %}" />
+            </div>
+        </form>
+
+	</div>  
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="content member-friends"> 
+
+    <div class="title">
+        {% blocktrans %}You are now friends with {{ username }}{% endblocktrans %}
+    </div>
+
+    <a href="{% url my-friends %}">{% trans "View all my friends" %}</a>
+
+</div>
+{% endblock content %}

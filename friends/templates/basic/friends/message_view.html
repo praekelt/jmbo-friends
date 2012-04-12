@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n friends_tags %}
+
+{% block content %}
+	<div class="content message-view">
+	    <div class="title">{% blocktrans %}Conversation with{% endblocktrans %}: {{ object.from_member }}</div>
+	    <div class="meta">
+           <div class="inbox">
+               <a href="{% url inbox %}">{% trans "Back to inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
+           </div>
+	    </div>
+	    
+	    {% direct_message object %}
+	    
+	</div>  
+{% endblock %}

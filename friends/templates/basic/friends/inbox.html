@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+	<div class="content inbox">
+	    <div class="title">{% blocktrans %}Inbox{% endblocktrans %}</div>
+	    {% if object_list %}
+		    <table>
+		       <tr>
+		           <th width="20%">{% blocktrans %}From{% endblocktrans %}</th><th>{% blocktrans %}Message{% endblocktrans %}</th><th width="20%">{% blocktrans %}Date / Time{% endblocktrans %}</th>
+		       </tr>
+		       {% for object in object_list %}
+			       <tr {% ifequal object.state 'sent' %}class="unread-message"{% endifequal %}>
+			           <td><a href="{% url member-detail object.from_member.username %}">{{ object.from_member.username|truncatewords:10 }}</a></td>
+			           <td><a href="{% url message-view object.id %}">{{ object.message }}</a></td>
+			           <td>{{ object.created }}</td>
+			       </tr>
+		       {% endfor %}
+		    </table>
+		{% else %}
+		    {% blocktrans %}You have no messages.{% endblocktrans %} <a href="{% url send-direct-message %}">{% blocktrans %}Send a message{% endblocktrans %}</a>.
+		{% endif %}
+	</div>  
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="content member-friends"> 
+
+    <div class="title">
+        {% blocktrans with friend.username as username %}Send friend request to {{ username }}{% endblocktrans %}
+    </div>
+
+    <form action="{% url friend-request friend.id %}" method="POST" class="foundry-form">
+        {% csrf_token %}
+        {{ form.as_div }}
+        <div class="buttons">
+            <input type="submit" value="{% trans "Send request" %}" />
+        </div>
+    </form>
+
+</div>
+{% endblock content %}
