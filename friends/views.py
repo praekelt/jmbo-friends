@@ -145,8 +145,7 @@ class MyFriends(GenericObjectList):
     
     
     def get_queryset(self, *args, **kwargs):
-        # xxx: user.member ?
-        return self.request.user.member.get_friends()
+        return self.request.user.get_friends()
     
     def get_paginate_by(self, *args, **kwargs):
         return 20
@@ -180,9 +179,8 @@ def accept_friend_request(request, memberfriend_id):
 
 
 def de_friend(request, member_id):
-    # This single check is sufficient to ensure a valid request
-    # todo: friendlier page than a 404. Break it down do inform "you are 
-    # already friends" etc.
+    # todo: friendlier page than a 404.
+    # todo: use Q
     try:
         obj = MemberFriend.objects.get(member=request.user, friend__id=member_id, state='accepted')
     except MemberFriend.DoesNotExist:
@@ -190,6 +188,6 @@ def de_friend(request, member_id):
             obj = MemberFriend.objects.get(member__id=member_id, friend=request.user, state='accepted')
         except MemberFriend.DoesNotExist:
             return Http404('MemberFriend does not exist')
-        
-    obj.delete()
+       
+    obj.defriend()
     return HttpResponseRedirect(reverse('my-friends'))

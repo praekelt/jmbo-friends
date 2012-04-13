@@ -25,18 +25,19 @@ def my_friends(member, my_friends):
 
 
 @register.inclusion_tag('friends/inclusion_tags/suggested_friends.html')
-def suggested_friends(user):
+def suggested_friends(member):
     """
     Displays a list of suggested friends.
     """
     try:
-        CACHE_KEY = 'JMBO_SUGGESTED_FRIENDS_MEMBER_ID_%d' % user.member.id
+        CACHE_KEY = 'JMBO_SUGGESTED_FRIENDS_MEMBER_ID_%d' % member.id
         suggested_friend_ids = cache.get(CACHE_KEY)
         if suggested_friend_ids:
             suggested_friends = Member.objects.filter(pk__in=suggested_friend_ids)
         else:
-            friends, exclude_ids = Member.objects.get(id=user.member.id).get_friends_with_ids()
-            exclude_ids.append(user.member.id)
+            #friends, exclude_ids = Member.objects.get(id=user.member.id).get_friends_with_ids()
+            friends, exclude_ids = member.get_friends_with_ids()
+            exclude_ids.append(member.id)
             suggested_friends = []
             for friend in friends:
                 friend.other_friends, friend_ids = friend.get_friends_with_ids(exclude_ids, 5)

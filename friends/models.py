@@ -95,6 +95,12 @@ class MemberFriend(models.Model):
                 obj.delete()
 
 
+    def defriend(self):
+        # Setting state to declined means we can never be friends ever again
+        self.state = 'declined'
+        self.save()
+
+
 class DirectMessage(models.Model):
     from_member = models.ForeignKey(Member, related_name='sent_items')
     to_member = models.ForeignKey(Member, related_name='inbox')
