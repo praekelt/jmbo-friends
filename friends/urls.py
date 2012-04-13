@@ -66,7 +66,7 @@ urlpatterns = patterns('',
     ),
     url(r'^message/send/$',
         login_required(
-            views.SendMessage.as_view(
+            views.SendDirectMessage.as_view(
                 form_class=forms.SendDirectMessageForm,
                 template_name='friends/send_direct_message.html'
             )

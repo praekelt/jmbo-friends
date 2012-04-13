@@ -1,3 +1,5 @@
+# xxx: ask Euan for some comments and docstrings
+
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import ProcessFormView, ModelFormMixin
 

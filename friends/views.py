@@ -14,6 +14,8 @@ from friends.models import MemberFriend, DirectMessage
 from friends.forms import FriendRequestForm
 
 
+# xxx: I want so see login_required in this module, not urls.py.
+
 class MemberDetail(CreateView):
     
     def get_form_kwargs(self):
@@ -49,14 +51,17 @@ class MemberDetail(CreateView):
 class Inbox(ListView):
     
     def get_queryset(self):
-        return DirectMessage.objects.filter(to_member__id=self.request.user.id).exclude(state='archived').order_by('-state', '-created')
+        # xxx: this query causes duplicates. You need to store 
+        # root id on each record.
+        return DirectMessage.objects.filter(to_member__id=self.request.user.id).exclude(state='archived').order_by('-created', '-state')
 
 
-class SendMessage(CreateView):
+class SendDirectMessage(CreateView):
     
     def get_form_kwargs(self):
-        kwargs = super(SendMessage, self).get_form_kwargs()
-        kwargs.update({'from_member': Member.objects.get(pk=self.request.user.id)})
+        kwargs = super(SendDirectMessage, self).get_form_kwargs()
+        #kwargs.update({'from_member': Member.objects.get(id=self.request.user.id)})
+        kwargs.update({'from_member': self.request.user})
         return kwargs
 
 

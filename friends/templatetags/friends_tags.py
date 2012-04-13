@@ -14,6 +14,7 @@ def my_friends(member, my_friends):
     """
     Displays my friends and some of their's too.
     """
+    # xxx: overkill. Should be a method on Member.
     friends, exclude_ids = Member.objects.get(id=member.id).get_friends_with_ids()
     exclude_ids.append(member.id)
     for friend in friends:
@@ -60,5 +61,6 @@ def direct_message(direct_message):
     """
     Iterates through all the message replies.
     """
+    # xxx: what is the point? Looks redundant.
     return {'object' : direct_message}
 

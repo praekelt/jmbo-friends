@@ -2,8 +2,8 @@
 {% load i18n %}
 
 {% block content %}
-	<div class="content member-detail">
-	    <div class="title">{% blocktrans %}Reply to: {% endblocktrans %}{{ original_message.from_member }}</div>
+	<div class="content reply-to-direct-message">
+	    <div class="title">{% blocktrans %}Reply to{% endblocktrans %}: {{ original_message.from_member }}</div>
 
 	    <div class="meta">
            <div class="inbox">

@@ -7,7 +7,8 @@
 	    {% if object_list %}
 		    <table>
 		       <tr>
-		           <th width="20%">{% blocktrans %}From{% endblocktrans %}</th><th>{% blocktrans %}Message{% endblocktrans %}</th><th width="20%">{% blocktrans %}Date / Time{% endblocktrans %}</th>
+                    <!-- todo: use CSS for widths -->
+		           <th width="20%">{% blocktrans %}From{% endblocktrans %}</th><th>{% blocktrans %}Message{% endblocktrans %}</th><th width="20%">{% blocktrans %}Date / time{% endblocktrans %}</th>
 		       </tr>
 		       {% for object in object_list %}
 			       <tr {% ifequal object.state 'sent' %}class="unread-message"{% endifequal %}>
