@@ -28,5 +28,5 @@ def form_valid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
 
 #------------------------------------------------------------------------------
-ModelFormMixin.get_form_kwargs = get_form_kwargs
-ModelFormMixin.form_valid = form_valid
+#ModelFormMixin.get_form_kwargs = get_form_kwargs
+#ModelFormMixin.form_valid = form_valid

@@ -102,6 +102,7 @@ class MemberFriend(models.Model):
 
 
 class DirectMessage(models.Model):
+    root_direct_message = models.ForeignKey('self', null=True, blank=True, editable=False)
     from_member = models.ForeignKey(Member, related_name='sent_items')
     to_member = models.ForeignKey(Member, related_name='inbox')
     message = models.TextField()
@@ -117,3 +118,15 @@ class DirectMessage(models.Model):
         )
     )
     created = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs): 
+        is_new = not self.id
+
+        super(DirectMessage, self).save(*args, **kwargs)
+
+        if is_new:
+            if not self.reply_to:
+                self.root_direct_message = self
+            else:
+                self.root_direct_message = self.reply_to.root_direct_message
+            self.save()

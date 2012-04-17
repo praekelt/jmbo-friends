@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from jmbo.generic.views import GenericObjectDetail, GenericObjectList
 from foundry.models import Member, Notification
@@ -29,10 +30,10 @@ class MemberDetail(CreateView):
         context = super(MemberDetail, self).get_context_data(**kwargs)
         
         member_is_self = True if self.member.id == self.request.user.id else False
-    
+   
         context.update({'object' : self.member,
                         'notifications' : Notification.objects.filter(member=self.request.user).count() if member_is_self else False,
-                        'unread_messages' : DirectMessage.objects.filter(to_member__id=self.request.user.id, state='sent', reply_to=None).count() if member_is_self else False,
+                        'unread_messages' : DirectMessage.objects.filter(to_member=self.request.user, state='sent').count() if member_is_self else False,
                         'can_friend' : self.request.user.can_friend(self.member) if self.request.user.is_authenticated() and isinstance(self.request.user, Member) else False,
                         })
         return context
@@ -47,39 +48,56 @@ class MemberDetail(CreateView):
         self.member = get_object_or_404(Member, username=username)
         return super(MemberDetail, self).post(request, *args, **kwargs)
 
+    def get_success_url(self):
+        return reverse('member-detail', args=[self.member.username])
+
+    def form_valid(self, form):
+        msg = _("Your message has been sent.")
+        messages.success(self.request, msg, fail_silently=True)
+        return super(MemberDetail, self).form_valid(form)
+
 
 class Inbox(ListView):
     
     def get_queryset(self):
-        # xxx: this query causes duplicates. You need to store 
-        # root id on each record.
-        return DirectMessage.objects.filter(to_member__id=self.request.user.id).exclude(state='archived').order_by('-created', '-state')
+        return DirectMessage.objects.filter(
+            Q(to_member=self.request.user)|Q(from_member=self.request.user), 
+            reply_to=None
+        ).exclude(state='archived').order_by('-created', '-state')
 
 
 class SendDirectMessage(CreateView):
-    
+   
     def get_form_kwargs(self):
         kwargs = super(SendDirectMessage, self).get_form_kwargs()
-        #kwargs.update({'from_member': Member.objects.get(id=self.request.user.id)})
         kwargs.update({'from_member': self.request.user})
         return kwargs
+ 
+    def get_success_url(self):
+        return reverse('inbox')
+
+    def form_valid(self, form):
+        msg = _("Your message has been sent.")
+        messages.success(self.request, msg, fail_silently=True)
+        return super(SendDirectMessage, self).form_valid(form)
 
 
 class ViewMessage(DetailView):
     
     def get_queryset(self):
-        return DirectMessage.objects.filter(to_member__id=self.request.user.id)
+        return DirectMessage.objects.filter(
+            Q(to_member=self.request.user)|Q(from_member=self.request.user)
+        )
     
     def get_object(self, *args, **kwargs):
-        object = super(ViewMessage, self).get_object(*args, **kwargs)
-        if object.state == 'sent':
-            object.state = 'read'
-            object.save()
-        return object
+        obj = super(ViewMessage, self).get_object(*args, **kwargs).root_direct_message
+        # Mark all messages in thread sent to authenticated user as read
+        DirectMessage.objects.filter(root_direct_message=obj, to_member=self.request.user, state='sent').update(state='read')
+        return obj
     
     def get_context_data(self, **kwargs):
         context = super(ViewMessage, self).get_context_data(**kwargs)
-        context.update({'unread_messages' : DirectMessage.objects.filter(to_member__id=self.request.user.id, state='sent', reply_to=None).count()})
+        context.update({'unread_messages' : DirectMessage.objects.filter(to_member=self.request.user, state='sent').count()})
         return context
     
 
@@ -115,6 +133,14 @@ class ReplyToDirectMessage(CreateView):
     def post(self, request, *args, **kwargs):
         self.message = self.get_object()
         return super(ReplyToDirectMessage, self).post(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return reverse('inbox')
+
+    def form_valid(self, form):
+        msg = _("Your reply has been sent.")
+        messages.success(self.request, msg, fail_silently=True)
+        return super(ReplyToDirectMessage, self).form_valid(form)
 
 
 def friend_request(request, member_id):
