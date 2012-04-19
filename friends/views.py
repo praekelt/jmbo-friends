@@ -21,9 +21,8 @@ class MemberDetail(CreateView):
     
     def get_form_kwargs(self):
         kwargs = super(MemberDetail, self).get_form_kwargs()
-        kwargs.update({'from_member': Member.objects.get(id=self.request.user.id),
-                       'to_member': self.member,
-                       })
+        kwargs['from_member'] = self.request.user
+        kwargs['to_member'] = self.member
         return kwargs
     
     def get_context_data(self, **kwargs):

@@ -59,7 +59,8 @@
         </tr>
 
     </table>
-    
+  
+    {% if request.user.is_authenticated %}
     {% if request.user.id != object.id %}
         <form action="{% url member-detail object.username %}" method="POST" class="foundry-form">
             {% csrf_token %}
@@ -68,6 +69,7 @@
                 <input type="submit" value="{% trans "Send" %}" />
             </div>
         </form>
+    {% endif %}
     {% endif %}
 
 </div>
