@@ -90,5 +90,10 @@ urlpatterns = patterns('',
         ),
         name='reply-to-direct-message'
     ),
+    
+    url(r'^my_badges/$',
+        login_required(views.MyBadges.as_view(template_name='foundry/my_badges.html')),
+        name='my-badges'
+    ),
 
 )
