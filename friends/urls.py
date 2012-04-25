@@ -92,7 +92,7 @@ urlpatterns = patterns('',
     ),
     
     url(r'^my_badges/$',
-        login_required(views.MyBadges.as_view(template_name='foundry/my_badges.html')),
+        login_required(views.MyBadges.as_view(template_name='friends/my_badges.html')),
         name='my-badges'
     ),
 

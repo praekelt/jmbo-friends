@@ -1,22 +1,13 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n foundry_tags %}
 
 {% block content %}
-	<div class="content send-direct-message">
-	    <div class="title">{% trans "Send a message" %}</div>
-	    <div class="meta">
-           <div class="friend">
-               <a href="{% url inbox %}">{% trans "Inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
-           </div>
-	    </div>
-    
-        <form action="{% url send-direct-message %}" method="POST" class="foundry-form">
-            {% csrf_token %}
-            {{ form.as_div }}
-            <div class="buttons">
-                <input type="submit" value="{% trans "Send" %}" />
-            </div>
-        </form>
 
-	</div>  
+    <div class="content member-detail">
+        {% profile_blurb user %}
+        <div class="title">{% trans "Send a message" %}</div>
+        {% with form_name='frmSendDirectMessage' submit='Send' %}
+            {% include "foundry/includes/form.html" %}
+        {% endwith %}
+    </div>  
 {% endblock %}

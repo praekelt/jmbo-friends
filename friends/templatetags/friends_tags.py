@@ -3,7 +3,9 @@ import random
 from django import template
 from django.core.cache import cache
 
-from foundry.models import Member
+from foundry.models import Member, Notification
+
+from friends.models import DirectMessage
 
 
 register = template.Library()
@@ -56,7 +58,6 @@ def suggested_friends(member):
     
     return {}
 
-
 @register.inclusion_tag('friends/inclusion_tags/direct_message.html')
 def direct_message(direct_message):
     """
@@ -65,3 +66,13 @@ def direct_message(direct_message):
     # xxx: what is the point? Looks redundant.
     return {'object' : direct_message}
 
+@register.inclusion_tag('friends/inclusion_tags/message_count.html')
+def message_count(user):
+    """
+    Displays the user's number of unread messages.
+    """
+    
+    if hasattr(user,'member'):
+        return { 'message_count' : DirectMessage.objects.filter(to_member__id=user.id, state='sent', reply_to=None).count() }
+    else:
+        return { 'message_count' : 0 }

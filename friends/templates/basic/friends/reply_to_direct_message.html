@@ -1,26 +1,13 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n foundry_tags %}
 
 {% block content %}
-	<div class="content reply-to-direct-message">
-	    <div class="title">{% blocktrans %}Reply to{% endblocktrans %}: {{ original_message.from_member }}</div>
 
-	    <div class="meta">
-           <div class="inbox">
-               <a href="{% url inbox %}">{% trans "Back to inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
-           </div>
-           <div class="original-message">
-               <a href="{% url message-view original_message.id %}">{% trans "Back to original message" %}</a>
-           </div>
-	    </div>
-    
-        <form action="{% url reply-to-direct-message original_message.id %}" method="POST" class="foundry-form">
-            {% csrf_token %}
-            {{ form.as_div }}
-            <div class="buttons">
-                <input type="submit" value="{% trans "Reply" %}" />
-            </div>
-        </form>
-
-	</div>  
+    <div class="content member-detail">
+        {% profile_blurb user %}
+        <div class="title">{% blocktrans %}Reply to{% endblocktrans %}: {{ original_message.from_member }}</div>
+        {% with form_name='frmSendDirectMessage' submit='Send' %}
+            {% include "foundry/includes/form.html" %}
+        {% endwith %}
+    </div>  
 {% endblock %}

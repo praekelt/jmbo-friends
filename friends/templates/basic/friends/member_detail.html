@@ -1,76 +1,51 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n foundry_tags %}
 
 {% block content %}
-<div class="content member-detail">
-
-    <img src="{{ object.get_thumbnail_LAYER_url }}" />
-
-    <div class="title">{{ object.username }}</div>
-
-    {% if object.about_me %}
-        <div class="about-me">{{ object.about_me }}</div>
-    {% endif %}
-
-    <div class="meta">
-        {% if can_friend %}
-            <div class="friend">
-                <a href="{% url friend-request object.id %}">{% trans "Send friend request" %}</a>
-            </div>
-        {% endif %}
-        {% if notifications %}
-            <div class="notifications">
-                <a href="{% url member-notifications %}">{% trans "Notifications" %} ({{ notifications }})</a>
-            </div>
-        {% endif %}
-        {% if request.user.id == object.id %}
-            <div class="inbox">
-                <a href="{% url inbox %}">{% trans "Inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
-            </div>
-            <div class="send-message">
-                <a href="{% url send-direct-message %}">{% trans "Send a message" %}</a>
-            </div>
-            <div class="create-blogpost">
-                <a href="{% url create-blogpost %}">{% trans "Create a blog post" %}</a>
-            </div>
-            <div class="edit-profile">
-                <a href="{% url edit-profile %}">{% trans "Update profile" %}</a>
-            </div>
-            <div class="my-friends">
-                <a href="{% url my-friends %}">{% trans "My friends" %}</a>
-            </div>
-        {% endif %}
-    </div>
-
-    <table>
-        <tr class="total-comments">
-            <th>{% trans "Total comments" %}</th>            
-            <td>{{ object.number_of_comments }}</td>
-        </tr>
-        <tr class="recent-comments">
-            <th>{% trans "Recent comments" %}</th>            
-            <td>
-                {% for comment in object.last_5_comments %}
-                    <div>
-                        <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.comment|truncatewords:20 }}</a>
-                    </div>
-                {% endfor %}
-            </td>
-        </tr>
-
-    </table>
-  
-    {% if request.user.is_authenticated %}
-    {% if request.user.id != object.id %}
-        <form action="{% url member-detail object.username %}" method="POST" class="foundry-form">
-            {% csrf_token %}
-            {{ form.as_div }}
-            <div class="buttons">
-                <input type="submit" value="{% trans "Send" %}" />
-            </div>
-        </form>
-    {% endif %}
-    {% endif %}
-
-</div>
+	<div class="content member-detail">
+	
+		{% if is_self %}
+		    {% profile_blurb user %}
+		{% else %}
+		    <img src="{{ object.get_thumbnail_LAYER_url }}" />
+			<div class="title">{{ object.username }}</div>
+			{% if object.about_me %}
+			    <p>{{ object.about_me }}</p>
+			{% endif %}
+			<div class="meta">
+			    {% if can_friend %}
+			       <div class="friend">
+			           <a href="{% url friend-request object.id %}">{% trans "Send friend request" %}</a>
+			       </div>
+			    {% endif %}
+		    </div>            
+		{% endif %}
+	
+	    <div class="title">Comments</div>
+	
+	    <table>
+	        <tr class="total-comments">
+	            <th>{% trans "Total comments" %}</th>            
+	            <td>{{ object.number_of_comments }}</td>
+	        </tr>
+	        <tr class="recent-comments">
+	            <th>{% trans "Recent comments" %}</th>            
+	            <td>
+	                {% for comment in object.last_5_comments %}
+	                    <div>
+	                        <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.comment|truncatewords:20 }}</a>
+	                    </div>
+	                {% endfor %}
+	            </td>
+	        </tr>
+	
+	    </table>
+	    
+	    {% if not is_self %}
+	        {% with form_name='frmDirectMessage' submit='Send' %}
+	            {% include "foundry/includes/form.html" %}
+	        {% endwith %}
+	    {% endif %}
+	
+	</div>
 {% endblock content %}

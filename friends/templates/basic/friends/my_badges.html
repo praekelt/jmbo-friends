@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n jmbo_inclusion_tags foundry_tags %}
+
+{% block content %}
+	<div class="content member-detail user-page">
+	    {% profile_blurb user %}
+	    <div class="foundry-container foundry-listing-vertical-thumbnail">
+	        <div class="title">{% trans "My Badges" %}</div>
+	        <div class="items">
+	
+		        <table cellspacing="0" class="foundry-page-row">
+		            <tbody>
+		                <tr>
+		                    <td class="foundry-page-column foundry-page-column-16">
+		                        <div class="foundry-page-tile">
+		                            <div class="foundry-container foundry-listing-vertical">
+		                                <div class="items">
+		                                    <div class="item first last">
+		                                        <div class="description">{% trans "Earn badges to level up all the way to Club Owner" %}</div>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </td>
+		                </tr>
+		            </tbody>
+		        </table>
+		        
+	            {% for group in badge_groups %}
+			        <table cellspacing="0" class="foundry-page-row">
+			            <tbody>
+			                <tr>
+			                    <td class="foundry-page-column foundry-page-column-16">
+			                        <div class="foundry-page-tile">
+			                            <div class="foundry-container foundry-listing-horizontal">
+			                                <div class="title">{{ group.title }}</div>
+			                                <div class="items">
+	                                            {% for badge in group.badges %}
+				                                    <div class="item item-gallery">
+				                                        <a href="badge-detail.html">
+				                                            {% if badge.is_awarded %}
+				                                                <img src="{{ badge.get_thumbnail_LAYER_url }}" />
+				                                            {% else %}
+				                                                <img src="{{STATIC_URL}}/img/badge_off.png" />
+				                                            {% endif %}
+				                                        </a>
+				                                        <div><a href="badge-detail.html">{{ badge.get_type_display }}</a></div>
+				                                    </div>
+	                                            {% endfor %}
+	                                            <div class="clear"></div>
+			                                </div>
+			                            </div>
+			                        </div>
+			                    </td>
+			                </tr>
+			            </tbody>
+			        </table>
+	            {% endfor %}
+	            
+		    </div>
+		</div>
+	</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-from django.views.generic import DetailView, ListView, CreateView, UpdateView TemplateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, TemplateView
 from django.shortcuts import get_object_or_404, render_to_response
 from django.db.models import Q
 from django.template import RequestContext
@@ -9,31 +9,31 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 
 from jmbo.generic.views import GenericObjectDetail, GenericObjectList
-from foundry.models import Member, Notification
+from foundry.models import Member, Notification, Link
 
-from friends.models import MemberFriend, DirectMessage
+from friends.models import MemberFriend, DirectMessage, BadgeGroup
 from friends.forms import FriendRequestForm
 
 
 # xxx: I want so see login_required in this module, not urls.py.
+# xxx: Can't be done with class-based views unless you create a def with login_required, 
+#      which calls the class in turn.
 
 class MemberDetail(CreateView):
     
     def get_form_kwargs(self):
         kwargs = super(MemberDetail, self).get_form_kwargs()
-        kwargs['from_member'] = self.request.user
-        kwargs['to_member'] = self.member
+        kwargs.update({'from_member': Member.objects.get(id=self.request.user.id),
+                       'to_member': self.member,
+                       })
         return kwargs
     
     def get_context_data(self, **kwargs):
         context = super(MemberDetail, self).get_context_data(**kwargs)
         
-        member_is_self = True if self.member.id == self.request.user.id else False
-   
         context.update({'object' : self.member,
-                        'notifications' : Notification.objects.filter(member=self.request.user).count() if member_is_self else False,
-                        'unread_messages' : DirectMessage.objects.filter(to_member=self.request.user, state='sent').count() if member_is_self else False,
-                        'can_friend' : self.request.user.can_friend(self.member) if self.request.user.is_authenticated() and isinstance(self.request.user, Member) else False,
+                        'is_self' : True if self.member.id == self.request.user.id else False,
+                        'can_friend' : self.request.user.member.can_friend(self.member) if self.request.user.is_authenticated() and isinstance(self.request.user, Member) else False,
                         })
         return context
     
@@ -46,14 +46,6 @@ class MemberDetail(CreateView):
         username = kwargs.pop('username')
         self.member = get_object_or_404(Member, username=username)
         return super(MemberDetail, self).post(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse('member-detail', args=[self.member.username])
-
-    def form_valid(self, form):
-        msg = _("Your message has been sent.")
-        messages.success(self.request, msg, fail_silently=True)
-        return super(MemberDetail, self).form_valid(form)
 
 
 class Inbox(ListView):
