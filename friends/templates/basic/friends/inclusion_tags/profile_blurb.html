@@ -17,16 +17,16 @@
         <a href="{% url user_activity %}">{% trans "Activity" %}</a>
     </div>
     <div class="friend">
-        <a href="{% url inbox %}">{% trans "Inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
+        <a href="{% url my-badges %}">{% trans "My Badges" %}</a>
     </div>
     <div class="friend">
-        <a href="{% url my-badges %}">{% trans "My Badges" %}</a>
+        <a href="{% url inbox %}">{% trans "Inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
     </div>
     <div class="friend">
         <a href="{% url send-direct-message %}">{% trans "Send Message" %}</a>
     </div>
     <div class="friend">
-        <a href="{% url create-blogpost %}">{% trans "Create Post" %}</a>
+        <a href="{% url create-blogpost %}">{% trans "Create Blog" %}</a>
     </div>
     <div class="friend">
         <a href="{% url my-friends %}">{% trans "Friends" %}</a>
