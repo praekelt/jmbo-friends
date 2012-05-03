@@ -17,7 +17,6 @@ def get_form_kwargs(self):
 
 #------------------------------------------------------------------------------
 def form_valid(self, form):
-    print 'form Valid'
     if self.save_needs_request:
         self.object = form.save(self.request)
     else:
