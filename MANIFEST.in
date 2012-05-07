@@ -1,0 +1,8 @@
+include AUTHORS.rst
+include CHANGELOG.rst
+include LICENSE
+include README.rst
+recursive-include friends/templates *
+recursive-include friends/templatetags *
+recursive-include friends/migrations *
+recursive-include friends/management *
