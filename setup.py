@@ -11,7 +11,7 @@ setup(
     url='http://github.com/praekelt/jmbo-friends',
     packages = find_packages(),
     install_requires = [
-        'jmbo-friends',
+        'jmbo-foundry',
     ],
     include_package_data=True,
     tests_require=[
