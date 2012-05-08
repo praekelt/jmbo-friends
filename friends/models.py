@@ -6,9 +6,6 @@ from photologue.models import ImageModel
 
 from foundry.models import Member, Link, Notification
 
-import friends.monkey
-
-
 def can_friend(self, friend):
         # Can't friend yourself
         if self == friend:
@@ -16,7 +13,6 @@ def can_friend(self, friend):
         return not MemberFriend.objects.filter(
             Q(member=self, friend=friend) | Q(member=friend, friend=self)
         ).exists()
-                    
 
 def get_friends_with_ids(self, exlude_ids=[], limit=0):
         # todo: find a better way to query for friends
@@ -37,19 +33,15 @@ def get_friends_with_ids(self, exlude_ids=[], limit=0):
         else:
             return Member.objects.filter(id__in=ids).order_by('?'), ids
 
-
 def get_friends(self):
         friends, _ = self.get_friends_with_ids()
-        return friends 
-
+        return friends
 
 def get_5_random_friends(self, exlude_ids=[]):
         friends, _ = self.get_friends_with_ids(exlude_ids, 5)
         return friends
 
-
 five_random_friends = property(get_5_random_friends)
-
 
 # Add to class
 Member.can_friend = can_friend
@@ -133,68 +125,3 @@ class DirectMessage(models.Model):
                 self.root_direct_message = self.reply_to.root_direct_message
             self.save()
 
-class BadgeGroup(models.Model):
-    
-    TYPE_FRIENDS = 'friends'
-    TYPE_COMMENTS = 'comments'
-    
-    TYPE_CHOICES = (
-                    (TYPE_FRIENDS,'Social Butterfly badges'),
-                    (TYPE_COMMENTS,'Chatterbox badges'),
-                    )
-    
-    title = models.CharField(max_length=32)
-    type = models.CharField(max_length=64, choices=TYPE_CHOICES)
-        
-    def __str__(self):
-        return self.get_type_display()
-    
-class Badge(ImageModel):
-    
-    # Friend types
-    
-    TYPE_SOCIAL_GRUB = 'social grub'
-    TYPE_SOCIAL_CATPERLLAR = 'social caterpillar'
-    TYPE_BABY_SOCIAL_BUTTERFLY = 'baby social butterfly'
-    TYPE_GROWN_UP_SOCIAL_BUTTERFLY = 'grown-up social butterfly'
-    TYPE_MAJESTIC_SOCIAL_BUTTERFLY = 'majestic social butterfly'
-    
-    # Comment types
-    
-    TYPE_TALKATIVE = 'talkative'
-    TYPE_CHATTERER = 'chatterer'
-    TYPE_BUSY_BODY = 'busy-body'
-    TYPE_BABBLER = 'babbler'
-    TYPE_GOSSIP_MONGER = 'gossip-monger'
-    
-    # All choices
-    
-    TYPE_CHOICES = (
-                    (TYPE_SOCIAL_GRUB,'Social Grub'),
-                    (TYPE_SOCIAL_CATPERLLAR,'Social Caterpillar'),
-                    (TYPE_BABY_SOCIAL_BUTTERFLY,'Baby Social Butterfly'),
-                    (TYPE_GROWN_UP_SOCIAL_BUTTERFLY,'Grown-up Social Butterfly'),
-                    (TYPE_MAJESTIC_SOCIAL_BUTTERFLY,'Majestic Social Butterfly'),
-                    
-                    (TYPE_TALKATIVE,'Talkative'),
-                    (TYPE_CHATTERER,'Chatterer'),
-                    (TYPE_BUSY_BODY,'Busy-body'),
-                    (TYPE_BABBLER,'Babbler'),
-                    (TYPE_GOSSIP_MONGER,'Gossip-monger'),
-                    )
-    
-    group = models.ForeignKey(BadgeGroup)
-    type = models.CharField(max_length=64, choices=TYPE_CHOICES, unique=True)
-    threshold = models.PositiveSmallIntegerField(default=0)
-    description = models.TextField(null=True, blank=True)
-        
-    def __str__(self):
-        return '%s (%s)' % (self.get_type_display(), self.group)
-    
-class MemberBadge(models.Model):
-    member = models.ForeignKey(Member)
-    badge = models.ForeignKey(Badge)
-    created = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        unique_together = (('member', 'badge'),)

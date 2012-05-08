@@ -208,24 +208,3 @@ def de_friend(request, member_id):
        
     obj.defriend()
     return HttpResponseRedirect(reverse('my-friends'))
-
-
-    
-class MyBadges(TemplateView):
-    
-    def get_context_data(self, **kwargs):
-        
-        badge_groups = BadgeGroup.objects.all()
-        
-        for group in badge_groups:
-            group.badges = []
-            for badge in group.badge_set.all():
-                badge.is_awarded = True if badge in self.request.user.member.badges.all() else False
-                group.badges.append(badge)
-
-        link, dc = Link.objects.get_or_create(
-            title='You have been awarded a new badge.', view_name='my-badges'
-        )
-        Notification.objects.filter(member=self.request.user.member, link=link).delete()
-
-        return { 'badge_groups' : badge_groups }
