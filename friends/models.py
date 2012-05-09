@@ -1,10 +1,14 @@
 from django.db import models
 from django.db.models import Q
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 from photologue.models import ImageModel
 
 from foundry.models import Member, Link, Notification
+
+from activity import constants as activity_constants
+from activity.models import UserActivity
 
 def can_friend(self, friend):
         # Can't friend yourself
@@ -87,6 +91,18 @@ class MemberFriend(models.Model):
             )
             for obj in Notification.objects.filter(member=self.friend, link=link):
                 obj.delete()
+                
+            UserActivity.track_activity(user=self.friend,
+                                        activity=activity_constants.ACTIVITY_ESTABLISHED_FRIENDSHIP,
+                                        sub=ugettext('You accepted a Friend Request from <a href="%s">%s</a>' % (reverse('member-detail', args=[self.member.username]), self.member)),
+                                        content_object=self,
+                                        image_object=self.member)
+            
+            UserActivity.track_activity(user=self.member,
+                                        activity=activity_constants.ACTIVITY_ESTABLISHED_FRIENDSHIP,
+                                        sub=ugettext('Your friend <a href="%s">%s</a> accepted your Friend Request. ' % (reverse('member-detail', args=[self.friend.username]), self.friend)),
+                                        content_object=self,
+                                        image_object=self.friend)
 
 
     def defriend(self):

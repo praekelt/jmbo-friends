@@ -11,7 +11,7 @@ from django.contrib import messages
 from jmbo.generic.views import GenericObjectDetail, GenericObjectList
 from foundry.models import Member, Notification, Link
 
-from friends.models import MemberFriend, DirectMessage, BadgeGroup
+from friends.models import MemberFriend, DirectMessage
 from friends.forms import FriendRequestForm
 
 
