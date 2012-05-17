@@ -5,7 +5,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-
 from friends import views, forms
 
 urlpatterns = patterns('',    
@@ -14,7 +13,8 @@ urlpatterns = patterns('',
     url(r'^members/(?P<username>[\w-]+)/$', 
         views.MemberDetail.as_view(
             form_class=forms.SendDirectMessageInlineForm,
-            template_name='friends/member_detail.html'
+            template_name='friends/member_detail.html',
+            success_url='/friends/members/%(username)s'
         ), 
         name='member-detail'
     ),

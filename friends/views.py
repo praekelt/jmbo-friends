@@ -6,7 +6,6 @@ from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.contrib import messages
 
 from jmbo.generic.views import GenericObjectDetail, GenericObjectList
 from foundry.models import Member, Notification, Link
@@ -46,6 +45,11 @@ class MemberDetail(CreateView):
         username = kwargs.pop('username')
         self.member = get_object_or_404(Member, username=username)
         return super(MemberDetail, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        msg = _("Your message has been sent.")
+        messages.success(self.request, msg, fail_silently=True)
+        return super(MemberDetail, self).form_valid(form)
 
 
 class Inbox(ListView):

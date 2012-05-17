@@ -109,6 +109,11 @@ class SendDirectMessageInlineForm(forms.ModelForm):
         
     as_div = as_div
 
+    def save(self, *args, **kwargs):
+        object = super(SendDirectMessageInlineForm, self).save(*args, **kwargs)
+        object.username = object.to_member.username
+        return object
+
 
 class ReplyToDirectMessageForm(SendDirectMessageInlineForm):
     
