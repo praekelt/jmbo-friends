@@ -126,8 +126,8 @@ class ReplyToDirectMessageForm(SendDirectMessageInlineForm):
         self.base_fields['reply_to'].widget = forms.HiddenInput()        
         super(ReplyToDirectMessageForm, self).__init__(from_member, to_member, *args, **kwargs)
         
-    def save(self, *args, **kwargs):
-        obj = super(ReplyToDirectMessageForm, self).save(*args, **kwargs)
-        obj.reply_to.state = 'sent'
-        obj.reply_to.save()
-        return obj
+#    def save(self, *args, **kwargs):
+#        obj = super(ReplyToDirectMessageForm, self).save(*args, **kwargs)
+#        obj.reply_to.state = 'sent'
+#        obj.reply_to.save()
+#        return obj

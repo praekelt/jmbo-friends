@@ -7,10 +7,12 @@
         <div class="header">{% trans "From" %}: {{ object.from_member }} {% trans "To" %}: {{ object.to_member }} {% trans "At" %}: {{ object.created }}</div>
 
         <p>{{ object.message }}</p>
-
-        <div class="message-actions">
-            <a href="{% url reply-to-direct-message object.id %}">{% trans "Reply" %}</a>
-        </div>
+        {% ifnotequal object.from_member.id user.id %}
+            {{ object.from_member.id }}{{ user.id }}
+	        <div class="message-actions">
+	            <a href="{% url reply-to-direct-message object.id %}">{% trans "Reply" %}</a>
+	        </div>
+	    {% endifnotequal %}
     </div>
     {% for message in object.replies.all %}  
         {% direct_message message %}

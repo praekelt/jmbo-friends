@@ -58,13 +58,14 @@ def suggested_friends(member):
     
     return {}
 
-@register.inclusion_tag('friends/inclusion_tags/direct_message.html')
-def direct_message(direct_message):
+@register.inclusion_tag('friends/inclusion_tags/direct_message.html', takes_context=True)
+def direct_message(context, direct_message):
     """
     Iterates through all the message replies.
     """
-    # xxx: what is the point? Looks redundant.
-    return {'object' : direct_message}
+    return {'user': context['user'],
+            'object' : direct_message
+            }
 
 @register.inclusion_tag('friends/inclusion_tags/message_count.html')
 def message_count(user):
@@ -73,6 +74,6 @@ def message_count(user):
     """
     
     if hasattr(user,'member'):
-        return { 'message_count' : DirectMessage.objects.filter(to_member__id=user.id, state='sent', reply_to=None).count() }
+        return { 'message_count' : DirectMessage.objects.filter(to_member__id=user.id, state='sent').count() }
     else:
         return { 'message_count' : 0 }

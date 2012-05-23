@@ -13,11 +13,6 @@ from foundry.models import Member, Notification, Link
 from friends.models import MemberFriend, DirectMessage
 from friends.forms import FriendRequestForm
 
-
-# xxx: I want so see login_required in this module, not urls.py.
-# xxx: Can't be done with class-based views unless you create a def with login_required, 
-#      which calls the class in turn.
-
 class MemberDetail(CreateView):
     
     def get_form_kwargs(self):
@@ -55,10 +50,7 @@ class MemberDetail(CreateView):
 class Inbox(ListView):
     
     def get_queryset(self):
-        return DirectMessage.objects.filter(
-            Q(to_member=self.request.user)|Q(from_member=self.request.user), 
-            reply_to=None
-        ).exclude(state='archived').order_by('-created', '-state')
+        return DirectMessage.objects.filter(to_member=self.request.user).exclude(state='archived').order_by('-state', '-created')
 
 
 class SendDirectMessage(CreateView):
@@ -87,7 +79,9 @@ class ViewMessage(DetailView):
     def get_object(self, *args, **kwargs):
         obj = super(ViewMessage, self).get_object(*args, **kwargs).root_direct_message
         # Mark all messages in thread sent to authenticated user as read
-        DirectMessage.objects.filter(root_direct_message=obj, to_member=self.request.user, state='sent').update(state='read')
+        DirectMessage.objects.filter(root_direct_message=obj, 
+                                     to_member=self.request.user, 
+                                     state='sent').update(state='read')
         return obj
     
     def get_context_data(self, **kwargs):
