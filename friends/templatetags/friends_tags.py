@@ -41,6 +41,7 @@ def suggested_friends(member):
             friends, exclude_ids = member.get_friends_with_ids()
             exclude_ids.append(member.id)
             suggested_friends = []
+            
             for friend in friends:
                 friend.other_friends, friend_ids = friend.get_friends_with_ids(exclude_ids, 5)
                 for suggested_friend in friend.other_friends:
@@ -51,12 +52,13 @@ def suggested_friends(member):
                 suggested_friends = random.sample(suggested_friends, 5)
                 
             cache.set(CACHE_KEY, [fr.id for fr in suggested_friends], 60 * 5)
-        
-        return { 'suggested_friends' : suggested_friends }
+            
+            if suggested_friends:
+                return { 'suggested_friends' : suggested_friends }
     except:
         pass
     
-    return {}
+    return { 'suggested_friends' : Member.objects.all().order_by('?')[0:5] }
 
 @register.inclusion_tag('friends/inclusion_tags/direct_message.html', takes_context=True)
 def direct_message(context, direct_message):
