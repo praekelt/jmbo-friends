@@ -58,7 +58,7 @@ def suggested_friends(member):
     except:
         pass
     
-    return { 'suggested_friends' : Member.objects.exclude(pk=member.id).order_by('?')[0:5] }
+    return { 'suggested_friends' : random.sample(Member.objects.exclude(pk=member.id).order_by('-last_login')[0:100], 5) }
 
 @register.inclusion_tag('friends/inclusion_tags/direct_message.html', takes_context=True)
 def direct_message(context, direct_message):
