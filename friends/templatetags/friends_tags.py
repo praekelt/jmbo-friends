@@ -38,6 +38,7 @@ def suggested_friends(member):
         suggested_friend_ids = cache.get(CACHE_KEY)
         if suggested_friend_ids:
             suggested_friends = Member.objects.filter(pk__in=suggested_friend_ids)
+            return { 'suggested_friends' : suggested_friends }
         else:
             friends, exclude_ids = member.get_friends_with_ids()
             exclude_ids.append(member.id)
@@ -54,7 +55,9 @@ def suggested_friends(member):
         pass
     
     if not suggested_friends:
-        suggestable_friends = Member.objects.exclude(pk=member.id).exclude(nickname=None, motribeprofile__nickname=None).order_by('-last_login')[0:10000]
+        from guinness_vip.models import MotribeProfile
+        valid_member_ids = [mp.id for mp in MotribeProfile.objects.exclude(nickname=None).order_by('?')[0:1000]]
+        suggestable_friends = Member.objects.exclude(pk=member.id).filter(id__in=valid_member_ids).order_by('-last_login')[0:100]
         suggested_friends = random.sample(suggestable_friends, 5) if suggestable_friends.count() > 4 else suggestable_friends
     
     cache.set(CACHE_KEY, [fr.id for fr in suggested_friends], 60 * 5)
