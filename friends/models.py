@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Q
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _, ugettext
 
@@ -20,10 +21,16 @@ def can_friend(self, friend):
 
 def get_friends_with_ids(self, exlude_ids=[], limit=0):
         # todo: find a better way to query for friends
+        
+        excluded_members = []
+        if hasattr(settings, 'EXCLUDED_MEMBERS'):
+            excluded_members = settings.EXCLUDED_MEMBERS
+        
         values_list = MemberFriend.objects.filter(
             Q(member=self)|Q(friend=self), 
-            state='accepted'
-        ).values_list('member', 'friend')
+            state='accepted',
+        ).exclude(Q(member__username__in=excluded_members)|Q(friend__username__in=excluded_members)).values_list('member', 'friend')
+        
         ids = []
         for member_id, friend_id in values_list:
             if self.id != member_id:
