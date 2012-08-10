@@ -56,7 +56,7 @@ def suggested_friends(member):
     
     if not suggested_friends:
             
-        suggestable_friends = Member.objects.all().order_by('-last_login')[0:100]
+        suggestable_friends = Member.objects.exclude(pk=member.id).order_by('-last_login')[0:100]
         suggested_friends = random.sample(suggestable_friends, 5) if suggestable_friends.count() > 4 else suggestable_friends
     
     cache.set(CACHE_KEY, [fr.id for fr in suggested_friends], 60 * 5)
