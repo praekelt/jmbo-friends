@@ -37,14 +37,12 @@
 			                                <div class="items">
 	                                            {% for badge in group.badges %}
 				                                    <div class="item item-gallery">
-				                                        <a href="badge-detail.html">
 				                                            {% if badge.is_awarded %}
 				                                                <img src="{{ badge.get_thumbnail_LAYER_url }}" />
 				                                            {% else %}
-				                                                <img src="{{STATIC_URL}}/img/badge_off.png" />
+				                                                <img src="{{STATIC_URL}}img/badge_off.png" />
 				                                            {% endif %}
-				                                        </a>
-				                                        <div><a href="badge-detail.html">{{ badge.get_type_display }}</a></div>
+				                                        <div>{{ badge.get_type_display }}</div>
 				                                    </div>
 	                                            {% endfor %}
 	                                            <div class="clear"></div>
