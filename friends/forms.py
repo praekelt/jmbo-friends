@@ -75,6 +75,43 @@ class FriendRequestForm(forms.ModelForm):
         return instance
 
     as_div = as_div
+    
+class SearchFriendsForm(forms.Form):
+    username = forms.CharField(required=False)
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
+    mobile_number = forms.CharField(required=False)
+    email = forms.CharField(required=False)
+    
+    def search(self, queryset):
+        has_search_criteria = False
+        
+        if self.cleaned_data.has_key('username') and self.cleaned_data['username'].strip():
+            has_search_criteria = True
+            queryset = queryset.filter(username__icontains=self.cleaned_data['username'])
+            
+        if self.cleaned_data.has_key('first_name') and self.cleaned_data['first_name'].strip():
+            has_search_criteria = True
+            queryset = queryset.filter(first_name__icontains=self.cleaned_data['first_name'])
+            
+        if self.cleaned_data.has_key('last_name') and self.cleaned_data['last_name'].strip():
+            has_search_criteria = True
+            queryset = queryset.filter(last_name__icontains=self.cleaned_data['last_name'])
+            
+        if self.cleaned_data.has_key('mobile_number') and self.cleaned_data['mobile_number'].strip():
+            has_search_criteria = True
+            queryset = queryset.filter(mobile_number__icontains=self.cleaned_data['mobile_number'])
+            
+        if self.cleaned_data.has_key('email') and self.cleaned_data['email'].strip():
+            has_search_criteria = True
+            queryset = queryset.filter(email__icontains=self.cleaned_data['email'])
+        
+        if has_search_criteria:
+            return queryset
+        else:
+            return queryset.empty()
+        
+    as_div = as_div
 
 
 class SendDirectMessageForm(forms.ModelForm):

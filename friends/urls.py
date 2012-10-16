@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
 from friends import views, forms
+from foundry import models
 
 urlpatterns = patterns('',    
    
@@ -20,43 +21,50 @@ urlpatterns = patterns('',
     ),
     
     # Friend request
-    url(
-        r'^friend-request/(?P<member_id>\d+)/$',
+    url(r'^friend-request/(?P<member_id>\d+)/$',
         login_required(views.friend_request),
         {},
         name='friend-request'
     ),
 
     # My friends
-    url(
-        r'^my-friends/$',
+    url(r'^my-friends/$',
         login_required(views.my_friends),
         {'template_name':'friends/my_friends.html'},
         name='my-friends'
     ),
 
     # My friend requests
-    url(
-        r'^my-friend-requests/$',
+    url(r'^my-friend-requests/$',
         login_required(views.my_friend_requests),
         {'template_name':'friends/my_friend_requests.html'},
         name='my-friend-requests'
     ),
 
     # Accept friend request
-    url(
-        r'^accept-friend-request/(?P<memberfriend_id>\d+)/$',
+    url(r'^accept-friend-request/(?P<memberfriend_id>\d+)/$',
         login_required(views.accept_friend_request),
         {},
         name='accept-friend-request'
     ),
 
     # De-friend a member
-    url(
-        r'^de-friend/(?P<member_id>\d+)/$',
+    url(r'^de-friend/(?P<member_id>\d+)/$',
         login_required(views.de_friend),
         {},
         name='de-friend'
+    ),
+    
+    url(r'^search/$',
+        login_required(
+            views.SearchView.as_view(
+                form_class=forms.SearchFriendsForm,
+                queryset=models.Member.objects.all(),
+                paginate_by=5,
+                template_name='friends/friend_search.html'
+            )
+        ),
+        name='search-friends'
     ),
 
     # Messaging

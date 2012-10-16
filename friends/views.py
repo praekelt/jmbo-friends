@@ -1,4 +1,5 @@
-from django.views.generic import DetailView, ListView, CreateView, UpdateView, TemplateView
+from django.views.generic import DetailView, FormView, ListView, CreateView, UpdateView, TemplateView
+from django.views.generic.list import BaseListView
 from django.shortcuts import get_object_or_404, render_to_response
 from django.db.models import Q
 from django.template import RequestContext
@@ -206,3 +207,28 @@ def de_friend(request, member_id):
        
     obj.defriend()
     return HttpResponseRedirect(reverse('my-friends'))
+
+class SearchView(FormView, ListView):
+    """
+    Get the fields that was completed in the form 
+    Match the completed fields with the database
+    """
+    object_list = None
+
+    def form_valid(self, form):
+        self.object_list = form.search(self.get_queryset())
+    
+    def get(self, request, *args, **kwargs):
+        return super(FormView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            self.form_valid(form)
+            context = super(BaseListView, 
+                            self).get_context_data(object_list=self.object_list,
+                                                   form=form)
+            return self.render_to_response(context)
+        else:
+            return self.form_invalid(form)
