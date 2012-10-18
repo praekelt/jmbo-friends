@@ -1,0 +1,8 @@
+Hi {{ to_member.display_name }},
+
+You have a new message from {{ from_member.display_name }}.
+
+To view and reply to this message, please log on at http://{{ current_site.domain }}
+
+Regards,
+Jmbo.

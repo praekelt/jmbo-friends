@@ -7,6 +7,10 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.core.mail import send_mail
+from django.contrib.sites.models import Site
+
 from foundry.forms import as_div
 
 from friends import models
@@ -129,7 +133,28 @@ class SendDirectMessageForm(forms.ModelForm):
         super(SendDirectMessageForm, self).__init__(*args, **kwargs)
          
     as_div = as_div
-
+    
+    def save(self, *args, **kwargs):
+        direct_message = super(SendDirectMessageForm, self).save(*args, **kwargs)
+        
+        try:
+            if direct_message.to_member.email:
+                subject = render_to_string('friends/email/direct_message_notification_subject.txt')
+                # Email subject *must not* contain newlines
+                subject = ''.join(subject.splitlines())
+                message = render_to_string('friends/email/direct_message_notification_message.txt', 
+                                           {'to_member': direct_message.to_member,
+                                            'from_member': direct_message.from_member,
+                                            'current_site' : Site.objects.get_current()
+                                            })
+                send_mail(subject, 
+                          message, 
+                          settings.DEFAULT_FROM_EMAIL, 
+                          [direct_message.to_member.email])
+        except:
+            pass
+        
+        return direct_message
 
 class SendDirectMessageInlineForm(forms.ModelForm):
     
@@ -149,9 +174,26 @@ class SendDirectMessageInlineForm(forms.ModelForm):
     as_div = as_div
 
     def save(self, *args, **kwargs):
-        object = super(SendDirectMessageInlineForm, self).save(*args, **kwargs)
-        object.username = object.to_member.username
-        return object
+        direct_message = super(SendDirectMessageInlineForm, self).save(*args, **kwargs)
+        direct_message.username = direct_message.to_member.username
+        try:
+            if direct_message.to_member.email:
+                subject = render_to_string('friends/email/direct_message_notification_subject.txt')
+                # Email subject *must not* contain newlines
+                subject = ''.join(subject.splitlines())
+                message = render_to_string('friends/email/direct_message_notification_message.txt', 
+                                           {'to_member': direct_message.to_member,
+                                            'from_member': direct_message.from_member,
+                                            'current_site' : Site.objects.get_current()
+                                            })
+                send_mail(subject, 
+                          message, 
+                          settings.DEFAULT_FROM_EMAIL, 
+                          [direct_message.to_member.email])
+        except:
+            pass
+        
+        return direct_message
 
 
 class ReplyToDirectMessageForm(SendDirectMessageInlineForm):
@@ -166,8 +208,24 @@ class ReplyToDirectMessageForm(SendDirectMessageInlineForm):
         self.base_fields['message'].label = ugettext('Message')
         super(ReplyToDirectMessageForm, self).__init__(from_member, to_member, *args, **kwargs)
         
-#    def save(self, *args, **kwargs):
-#        obj = super(ReplyToDirectMessageForm, self).save(*args, **kwargs)
-#        obj.reply_to.state = 'sent'
-#        obj.reply_to.save()
-#        return obj
+    def save(self, *args, **kwargs):
+        direct_message = super(ReplyToDirectMessageForm, self).save(*args, **kwargs)
+        direct_message.username = direct_message.to_member.username
+        try:
+            if direct_message.to_member.email:
+                subject = render_to_string('friends/email/direct_message_notification_subject.txt')
+                # Email subject *must not* contain newlines
+                subject = ''.join(subject.splitlines())
+                message = render_to_string('friends/email/direct_message_notification_message.txt', 
+                                           {'to_member': direct_message.to_member,
+                                            'from_member': direct_message.from_member,
+                                            'current_site' : Site.objects.get_current()
+                                            })
+                send_mail(subject, 
+                          message, 
+                          settings.DEFAULT_FROM_EMAIL, 
+                          [direct_message.to_member.email])
+        except:
+            pass
+        
+        return direct_message

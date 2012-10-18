@@ -5,11 +5,16 @@ from django.views.generic.list import BaseListView
 from django.shortcuts import get_object_or_404, render_to_response
 from django.db.models import Q
 from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.contrib import messages
+from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
+from django.core.mail import send_mail
+from django.conf import settings
+
 
 from jmbo.generic.views import GenericObjectDetail, GenericObjectList
 from foundry.models import Member, Notification, Link
@@ -149,6 +154,24 @@ def friend_request(request, member_id):
             instance = form.save()
             msg = _("Your invitation has been sent to %s." % instance.friend.username)
             messages.success(request, msg, fail_silently=True)
+            
+            try:
+                if friend.email:
+                    subject = render_to_string('friends/email/friend_request_notification_subject.txt')
+                    # Email subject *must not* contain newlines
+                    subject = ''.join(subject.splitlines())
+                    message = render_to_string('friends/email/friend_request_notification_message.txt', 
+                                               {'member': member,
+                                                'friend': friend,
+                                                'current_site' : Site.objects.get_current()
+                                                })
+                    send_mail(subject, 
+                              message, 
+                              settings.DEFAULT_FROM_EMAIL, 
+                              [friend.email])
+            except:
+                pass
+                
             return HttpResponseRedirect(reverse('my-friends'))
     else:
         form = FriendRequestForm(

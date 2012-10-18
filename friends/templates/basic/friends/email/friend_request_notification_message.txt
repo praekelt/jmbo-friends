@@ -1,0 +1,8 @@
+Hi {{ member.display_name }},
+
+You have a new friend request from {{ friend.display_name }}.
+
+To accept this friend request, please log on at http://{{ current_site.domain }}
+
+Regards,
+Jmbo.
