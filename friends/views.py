@@ -1,3 +1,5 @@
+import random
+
 from django.views.generic import DetailView, FormView, ListView, CreateView, UpdateView, TemplateView
 from django.views.generic.list import BaseListView
 from django.shortcuts import get_object_or_404, render_to_response
@@ -7,6 +9,7 @@ from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.core.cache import cache
 
 from jmbo.generic.views import GenericObjectDetail, GenericObjectList
 from foundry.models import Member, Notification, Link
@@ -232,3 +235,46 @@ class SearchView(FormView, ListView):
             return self.render_to_response(context)
         else:
             return self.form_invalid(form)
+
+class SuggestedFriends(TemplateView):
+    
+    def get_suggested_friends(self):
+        suggested_friends = []
+        member = self.request.user.member
+        
+        try:
+            CACHE_KEY = 'JMBO_SUGGESTED_FRIENDS_MEMBER_ID_%d' % member.id
+            suggested_friend_ids = cache.get(CACHE_KEY)
+            if suggested_friend_ids:
+                suggested_friends = Member.objects.filter(pk__in=suggested_friend_ids)
+                return { 'suggested_friends' : suggested_friends }
+            else:
+                friends, exclude_ids = member.get_friends_with_ids()
+                exclude_ids.append(member.id)
+                
+                for friend in friends:
+                    friend.other_friends, friend_ids = friend.get_friends_with_ids(exclude_ids, 5)
+                    for suggested_friend in friend.other_friends:
+                        suggested_friends.append(suggested_friend) 
+                    exclude_ids.extend(friend_ids)
+                    
+                if len(suggested_friends) > 5:
+                    suggested_friends = random.sample(suggested_friends, 5)
+        except:
+            pass
+        
+        if not suggested_friends:
+                
+            suggestable_friends = Member.objects.exclude(pk=member.id).order_by('-last_login')[0:100]
+            suggested_friends = random.sample(suggestable_friends, 5) if suggestable_friends.count() > 4 else suggestable_friends
+        
+        cache.set(CACHE_KEY, [fr.id for fr in suggested_friends], 60 * 5)
+        
+        return suggested_friends
+    
+    def get_context_data(self, **kwargs):
+        return {
+            'suggested_friends' : self.get_suggested_friends()
+        }
+        
+        

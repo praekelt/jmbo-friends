@@ -109,7 +109,7 @@ class SearchFriendsForm(forms.Form):
         if has_search_criteria:
             return queryset
         else:
-            return queryset.empty()
+            return queryset.none()
         
     as_div = as_div
 

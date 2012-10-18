@@ -66,6 +66,15 @@ urlpatterns = patterns('',
         ),
         name='search-friends'
     ),
+    
+    url(r'^suggested_friends/$',
+        login_required(
+            views.SuggestedFriends.as_view(
+                template_name='friends/suggested_friends.html'
+            )
+        ),
+        name='suggested-friends'
+    ),
 
     # Messaging
     url(r'^inbox/$',
