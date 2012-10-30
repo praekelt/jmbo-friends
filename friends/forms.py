@@ -81,11 +81,11 @@ class FriendRequestForm(forms.ModelForm):
     as_div = as_div
     
 class SearchFriendsForm(forms.Form):
-    username = forms.CharField(required=False)
-    first_name = forms.CharField(required=False)
-    last_name = forms.CharField(required=False)
-    mobile_number = forms.CharField(required=False)
-    email = forms.CharField(required=False)
+    username = forms.CharField(required=False, label=_("Username"))
+    first_name = forms.CharField(required=False, label=_("First Name"))
+    last_name = forms.CharField(required=False, label=_("Last Name"))
+    mobile_number = forms.CharField(required=False, label=_("Mobile Number"))
+    email = forms.CharField(required=False, label=_("Email"))
     
     def search(self, queryset):
         has_search_criteria = False
@@ -127,7 +127,8 @@ class SendDirectMessageForm(forms.ModelForm):
     def __init__(self, from_member, *args, **kwargs):
         self.base_fields['from_member'].initial = from_member
         self.base_fields['from_member'].widget = forms.HiddenInput()       
-        self.base_fields['to_member'].queryset = from_member.get_friends()  
+        self.base_fields['to_member'].queryset = from_member.get_friends()
+        self.base_fields['to_member'].label = ugettext("To member")
         self.base_fields['message'].label = ugettext('Message')
         #self.base_fields['message'].widget.attrs.update({'class':'commentbox'})
         super(SendDirectMessageForm, self).__init__(*args, **kwargs)
