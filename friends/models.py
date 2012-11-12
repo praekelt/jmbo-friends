@@ -23,13 +23,15 @@ def get_friends_with_ids(self, exlude_ids=[], limit=0):
         # todo: find a better way to query for friends
         
         excluded_members = []
-        if hasattr(settings, 'EXCLUDED_MEMBERS'):
-            excluded_members = settings.EXCLUDED_MEMBERS
+        if not hasattr(Member, '_excluded_member_ids') and hasattr(settings, 'EXCLUDED_MEMBERS'):
+            Member._excluded_member_ids = Member.objects.filter(username__in=
+                settings.EXCLUDED_MEMBERS).values_list('id', flat=True)
+        exlude_ids += Member._excluded_member_ids
         
         values_list = MemberFriend.objects.filter(
             Q(member=self)|Q(friend=self), 
             state='accepted',
-        ).exclude(Q(member__username__in=excluded_members)|Q(friend__username__in=excluded_members)).values_list('member', 'friend')
+        ).values_list('member', 'friend')
         
         ids = []
         for member_id, friend_id in values_list:
