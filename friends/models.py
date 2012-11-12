@@ -1,3 +1,5 @@
+from random import randint
+
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
@@ -42,7 +44,10 @@ def get_friends_with_ids(self, exlude_ids=[], limit=0):
                 if friend_id not in exlude_ids:
                     ids.append(friend_id)
         if limit > 0:
-            return Member.objects.filter(id__in=ids).order_by('?')[0:limit], ids
+            random_ids = []
+            for i in range(0, limit):
+                random_ids.append(ids[randint(0, len(ids) - 1)])
+            return Member.objects.filter(id__in=random_ids), ids
         else:
             return Member.objects.filter(id__in=ids).order_by('?'), ids
 
