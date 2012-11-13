@@ -1,0 +1,40 @@
+{% load i18n %}
+
+xxx: bring in line with member-detail
+<div class="profile-blurb">
+    <div class="title">{{ member.username }}</div>
+    <div class="user">
+        <img src="{{ member.get_thumbnail_LAYER_url }}" />
+        <div class="title">{{ member.username }}</div>
+        {% if member.about_me %}<div class="description">{{ member.about_me }}</div>{% endif %}
+    </div>
+    <div class="clear"></div>
+    <div class="meta">
+        {% if notifications %}
+            <div class="notifications last">
+                <a href="{% url member-notifications %}">{% trans "Notifications" %} ({{ notifications }})</a>
+            </div>
+        {% endif %}
+        <div class="friend first">
+            <a href="{% url my-activity %}">{% trans "Activity" %}</a>
+        </div>
+        <div class="friend">
+            <a href="{% url my-badges %}">{% trans "My Badges" %}</a>
+        </div>
+        <div class="friend">
+            <a href="{% url inbox %}">{% trans "Inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
+        </div>
+        <div class="friend">
+            <a href="{% url send-direct-message %}">{% trans "Send Message" %}</a>
+        </div>
+        <div class="friend">
+            <a href="{% url create-blogpost %}">{% trans "Create Blog" %}</a>
+        </div>
+        <div class="friend">
+            <a href="{% url my-friends %}">{% trans "Friends" %}</a>
+        </div>
+        <div class="friend last">
+            <a href="{% url edit-profile %}">{% trans "Profile" %}</a>
+        </div>
+    </div>
+</div>
