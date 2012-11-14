@@ -168,7 +168,6 @@ def friend_request(request, member_id):
 
 class MyFriends(GenericObjectList):
     
-    
     def get_queryset(self, *args, **kwargs):
         return self.request.user.get_friends()
     

@@ -66,16 +66,3 @@ def direct_message(direct_message):
     """
     # xxx: what is the point? Looks redundant.
     return {'object' : direct_message}
-
-
-@register.inclusion_tag('friends/inclusion_tags/profile_blurb.html')
-def profile_blurb(user, page=None):
-    """
-    Displays the user's profile blurb and profile sub-menu.
-    """
-    # xxx: ugh. explain.
-    return {'member' : user.member,
-            'notifications' : Notification.objects.filter(member=user).count(),
-            'unread_messages' : DirectMessage.objects.filter(to_member__id=user.id, state='sent').count(),
-            'page' : page,
-            }
