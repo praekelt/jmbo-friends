@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 
 from foundry.models import Member, Link, Notification
 
-import friends.monkey
+from friends import signals
 
 
 def can_friend(self, friend):
@@ -94,11 +94,13 @@ class MemberFriend(models.Model):
             for obj in Notification.objects.filter(member=self.friend, link=link):
                 obj.delete()
 
+        signals.friendship_established.send(sender=MemberFriend, instance=self)
 
     def defriend(self):
         # Setting state to declined means we can never be friends ever again
         self.state = 'declined'
         self.save()
+        signals.friendship_terminated.send(sender=MemberFriend, instance=self)
 
 
 class DirectMessage(models.Model):
