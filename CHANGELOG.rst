@@ -1,8 +1,8 @@
 Changelog
 =========
 
-next
-----
+0.2
+---
 #. Dispatch signals on friend amd defriend.
 #. Clean up template CSS.
 
