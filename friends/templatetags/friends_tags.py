@@ -3,7 +3,9 @@ import random
 from django import template
 from django.core.cache import cache
 
-from foundry.models import Member
+from foundry.models import Member, Notification
+
+from friends.models import DirectMessage
 
 
 register = template.Library()
@@ -64,4 +66,3 @@ def direct_message(direct_message):
     """
     # xxx: what is the point? Looks redundant.
     return {'object' : direct_message}
-
