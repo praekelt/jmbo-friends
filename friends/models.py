@@ -17,23 +17,30 @@ def can_friend(self, friend):
                     
 
 def get_friends_with_ids(self, exlude_ids=[], limit=0):
-        # todo: find a better way to query for friends
-        values_list = MemberFriend.objects.filter(
+        excluded_members = []
+        if not hasattr(Member, '_excluded_member_ids') and hasattr(settings, 'EXCLUDED_MEMBERS'):
+            Member._excluded_member_ids = Member.objects.filter(username__in=
+                settings.EXCLUDED_MEMBERS).values_list('id', flat=True)
+        exclude_ids += Member._excluded_member_ids
+        
+        qs = MemberFriend.objects.filter(
             Q(member=self)|Q(friend=self), 
-            state='accepted'
-        ).values_list('member', 'friend')
-        ids = []
-        for member_id, friend_id in values_list:
-            if self.id != member_id:
-                if member_id not in exlude_ids:
-                    ids.append(member_id)
-            if self.id != friend_id:
-                if friend_id not in exlude_ids:
-                    ids.append(friend_id)
+            state='accepted',
+        ).exclude(Q(member__in=exclude_ids)|Q(friend__in=exclude_ids)).order_by('?')
+        
         if limit > 0:
-            return Member.objects.filter(id__in=ids).order_by('?')[0:limit], ids
-        else:
-            return Member.objects.filter(id__in=ids).order_by('?'), ids
+            qs = qs[0:limit]
+        
+        member_friend_ids = qs.values_list('member', 'friend')
+
+        ids = []
+        for member_id, friend_id in member_friend_ids:
+            if self.id != member_id:
+                ids.append(member_id)
+            else:
+                ids.append(friend_id)
+        
+        return Member.objects.filter(id__in=ids), ids
 
 
 def get_friends(self):
