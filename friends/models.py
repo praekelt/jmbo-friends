@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.conf import settings
 
 from foundry.models import Member, Link, Notification
 
