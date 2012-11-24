@@ -17,7 +17,7 @@ def can_friend(self, friend):
         ).exists()
                     
 
-def get_friends_with_ids(self, exlude_ids=[], limit=0):
+def get_friends_with_ids(self, exclude_ids=[], limit=0):
         excluded_members = []
         if not hasattr(Member, '_excluded_member_ids') and hasattr(settings, 'EXCLUDED_MEMBERS'):
             Member._excluded_member_ids = Member.objects.filter(username__in=
@@ -49,8 +49,8 @@ def get_friends(self):
         return friends 
 
 
-def get_5_random_friends(self, exlude_ids=[]):
-        friends, _ = self.get_friends_with_ids(exlude_ids, 5)
+def get_5_random_friends(self, exclude_ids=[]):
+        friends, _ = self.get_friends_with_ids(exclude_ids, 5)
         return friends
 
 
