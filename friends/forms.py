@@ -4,7 +4,7 @@
 from django import forms
 from django.contrib.sites.models import get_current_site
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from foundry.forms import as_div
