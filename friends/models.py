@@ -9,49 +9,55 @@ from friends import signals
 
 
 def can_friend(self, friend):
-        # Can't friend yourself
-        if self == friend:
-            return False
-        return not MemberFriend.objects.filter(
-            Q(member=self, friend=friend) | Q(member=friend, friend=self)
-        ).exists()
+    # Can't friend yourself
+    if self == friend:
+        return False
+    return not MemberFriend.objects.filter(
+        Q(member=self, friend=friend) | Q(member=friend, friend=self)
+    ).exists()
                     
 
-def get_friends_with_ids(self, exclude_ids=[], limit=0):
-        excluded_members = []
-        if not hasattr(Member, '_excluded_member_ids') and hasattr(settings, 'EXCLUDED_MEMBERS'):
-            Member._excluded_member_ids = Member.objects.filter(username__in=
-                settings.EXCLUDED_MEMBERS).values_list('id', flat=True)
-        exclude_ids += Member._excluded_member_ids
-        
-        qs = MemberFriend.objects.filter(
-            Q(member=self)|Q(friend=self), 
-            state='accepted',
-        ).exclude(Q(member__in=exclude_ids)|Q(friend__in=exclude_ids)).order_by('?')
-        
-        if limit > 0:
-            qs = qs[0:limit]
-        
-        member_friend_ids = qs.values_list('member', 'friend')
+def get_friends_with_ids(self, exclude_ids=[], limit=0, pick_random=False):
+    excluded_members = []
+    if not hasattr(Member, '_excluded_member_ids') and hasattr(settings, 'EXCLUDED_MEMBERS'):
+        Member._excluded_member_ids = Member.objects.filter(username__in=
+            settings.EXCLUDED_MEMBERS).values_list('id', flat=True)
+    exclude_ids += Member._excluded_member_ids
+    
+    qs = MemberFriend.objects.filter(
+        Q(member=self)|Q(friend=self), 
+        state='accepted',
+    ).exclude(Q(member__in=exclude_ids)|Q(friend__in=exclude_ids))
+    '''
+    This orders friendships randomly, as opposed to ordering the members randomly.
+    Only makes sense if you want to pick a small number of random friends.
+    '''
+    if pick_random:
+        qs = qs.order_by('?')
+    
+    if limit > 0:
+        qs = qs[0:limit]
+    
+    member_friend_ids = qs.values_list('member', 'friend')
 
-        ids = []
-        for member_id, friend_id in member_friend_ids:
-            if self.id != member_id:
-                ids.append(member_id)
-            else:
-                ids.append(friend_id)
-        
-        return Member.objects.filter(id__in=ids), ids
+    ids = []
+    for member_id, friend_id in member_friend_ids:
+        if self.id != member_id:
+            ids.append(member_id)
+        else:
+            ids.append(friend_id)
+    
+    return Member.objects.filter(id__in=ids), ids
 
 
 def get_friends(self):
-        friends, _ = self.get_friends_with_ids()
-        return friends 
+    friends, _ = self.get_friends_with_ids()
+    return friends 
 
 
 def get_5_random_friends(self, exclude_ids=[]):
-        friends, _ = self.get_friends_with_ids(exclude_ids, 5)
-        return friends
+    friends, _ = self.get_friends_with_ids(exclude_ids, 5, pick_random=True)
+    return friends
 
 
 five_random_friends = property(get_5_random_friends)
