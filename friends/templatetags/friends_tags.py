@@ -18,10 +18,10 @@ def my_friends(member, my_friends):
     """
     # xxx: overkill. Should be a method on Member.
     friends, exclude_ids = Member.objects.get(id=member.id).get_friends_with_ids()
-    exclude_ids.append(member.id)
+    '''exclude_ids.append(member.id)
     for friend in friends:
         friend.other_friends, friend_ids = friend.get_friends_with_ids(exclude_ids, 5)
-        exclude_ids.extend(friend_ids)
+        exclude_ids.extend(friend_ids)'''
     
     return { 'friends' : friends }
 
