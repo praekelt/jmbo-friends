@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
