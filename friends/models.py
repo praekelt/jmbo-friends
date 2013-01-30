@@ -84,7 +84,7 @@ class MemberFriend(models.Model):
             ('declined', 'Declined')
         )
     )
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(null=True, auto_now_add=True)
     
     def save(self, *args, **kwargs):        
         is_new = not self.id

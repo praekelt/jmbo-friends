@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'MemberFriend.created'
         db.add_column('friends_memberfriend', 'created',
-                      self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, default=datetime.datetime(1, 1, 1, 0, 0), blank=True),
+                      self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True, blank=True),
                       keep_default=False)
 
 
@@ -100,7 +100,7 @@ class Migration(SchemaMigration):
         },
         'friends.memberfriend': {
             'Meta': {'object_name': 'MemberFriend'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'null': 'True', 'blank': 'True'}),
             'friend': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'member_friend_friend'", 'to': "orm['foundry.Member']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'member_friend_member'", 'to': "orm['foundry.Member']"}),
