@@ -1,8 +1,8 @@
 Changelog
 =========
 
-next
-----
+0.2.1
+-----
 #. Allow dot in username.
 
 0.2
