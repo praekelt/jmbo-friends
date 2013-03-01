@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.conf import settings
 
 from foundry.models import Member, Link, Notification
 
@@ -8,42 +9,55 @@ from friends import signals
 
 
 def can_friend(self, friend):
-        # Can't friend yourself
-        if self == friend:
-            return False
-        return not MemberFriend.objects.filter(
-            Q(member=self, friend=friend) | Q(member=friend, friend=self)
-        ).exists()
+    # Can't friend yourself
+    if self == friend:
+        return False
+    return not MemberFriend.objects.filter(
+        Q(member=self, friend=friend) | Q(member=friend, friend=self)
+    ).exists()
                     
 
-def get_friends_with_ids(self, exlude_ids=[], limit=0):
-        # todo: find a better way to query for friends
-        values_list = MemberFriend.objects.filter(
-            Q(member=self)|Q(friend=self), 
-            state='accepted'
-        ).values_list('member', 'friend')
-        ids = []
-        for member_id, friend_id in values_list:
-            if self.id != member_id:
-                if member_id not in exlude_ids:
-                    ids.append(member_id)
-            if self.id != friend_id:
-                if friend_id not in exlude_ids:
-                    ids.append(friend_id)
-        if limit > 0:
-            return Member.objects.filter(id__in=ids).order_by('?')[0:limit], ids
+def get_friends_with_ids(self, exclude_ids=[], limit=0, pick_random=False):
+    excluded_members = []
+    if not hasattr(Member, '_excluded_member_ids') and hasattr(settings, 'EXCLUDED_MEMBERS'):
+        Member._excluded_member_ids = Member.objects.filter(username__in=
+            settings.EXCLUDED_MEMBERS).values_list('id', flat=True)
+    exclude_ids += Member._excluded_member_ids
+    
+    qs = MemberFriend.objects.filter(
+        Q(member=self)|Q(friend=self), 
+        state='accepted',
+    ).exclude(Q(member__in=exclude_ids)|Q(friend__in=exclude_ids))
+    '''
+    This orders friendships randomly, as opposed to ordering the members randomly.
+    Only makes sense if you want to pick a small number of random friends.
+    '''
+    if pick_random:
+        qs = qs.order_by('?')
+    
+    if limit > 0:
+        qs = qs[0:limit]
+    
+    member_friend_ids = qs.values_list('member', 'friend')
+
+    ids = []
+    for member_id, friend_id in member_friend_ids:
+        if self.id != member_id:
+            ids.append(member_id)
         else:
-            return Member.objects.filter(id__in=ids).order_by('?'), ids
+            ids.append(friend_id)
+    
+    return Member.objects.filter(id__in=ids), ids
 
 
 def get_friends(self):
-        friends, _ = self.get_friends_with_ids()
-        return friends 
+    friends, _ = self.get_friends_with_ids()
+    return friends 
 
 
-def get_5_random_friends(self, exlude_ids=[]):
-        friends, _ = self.get_friends_with_ids(exlude_ids, 5)
-        return friends
+def get_5_random_friends(self, exclude_ids=[]):
+    friends, _ = self.get_friends_with_ids(exclude_ids, 5, pick_random=True)
+    return friends
 
 
 five_random_friends = property(get_5_random_friends)
@@ -70,6 +84,7 @@ class MemberFriend(models.Model):
             ('declined', 'Declined')
         )
     )
+    created = models.DateTimeField(null=True, auto_now_add=True)
     
     def save(self, *args, **kwargs):        
         is_new = not self.id

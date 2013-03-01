@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.2.1
+-----
+#. Allow dot in username.
+
 0.2
 ---
 #. Dispatch signals on friend amd defriend.
