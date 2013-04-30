@@ -1,6 +1,10 @@
 Changelog
 =========
 
+next
+----
+#. Allow @ in username.
+
 0.2.1
 -----
 #. Allow dot in username.
