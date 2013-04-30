@@ -11,7 +11,7 @@ from friends import views, forms
 urlpatterns = patterns('',    
    
     # Member detail page
-    url(r'^members/(?P<username>[\.\w-]+)/$', 
+    url(r'^members/(?P<username>[@\.\w-]+)/$', 
         views.MemberDetail.as_view(
             form_class=forms.SendDirectMessageInlineForm,
             template_name='friends/member_detail.html'
