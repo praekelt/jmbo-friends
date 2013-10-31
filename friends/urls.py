@@ -8,17 +8,17 @@ from django.contrib.auth.decorators import login_required
 
 from friends import views, forms
 
-urlpatterns = patterns('',    
-   
+urlpatterns = patterns('',
+
     # Member detail page
-    url(r'^members/(?P<username>[@\.\w-]+)/$', 
+    url(r'^members/(?P<username>[=@\.\w-]+)/$',
         views.MemberDetail.as_view(
             form_class=forms.SendDirectMessageInlineForm,
             template_name='friends/member_detail.html'
-        ), 
+        ),
         name='member-detail'
     ),
-    
+
     # Friend request
     url(
         r'^friend-request/(?P<member_id>\d+)/$',
