@@ -1,7 +1,7 @@
 Changelog
 =========
 
-next
+0.2.4
 -----
 #. Allow + in username.
 
