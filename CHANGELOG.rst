@@ -1,6 +1,10 @@
 Changelog
 =========
 
+next
+-----
+#. Allow + in username.
+
 0.2.3
 -----
 #. Allow = in username.
