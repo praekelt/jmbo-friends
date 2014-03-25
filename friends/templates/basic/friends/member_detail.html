@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n jmbo_template_tags %}
 
 {% block content %}
 <div class="member-detail">
 
+    {% jmbocache 300 'member-detail' object.id %}
     <img src="{{ object.get_thumbnail_LAYER_url }}" />
 
     <div class="title">{{ object.username }}</div>
@@ -59,7 +60,8 @@
         </tr>
 
     </table>
-  
+    {% endjmbocache %}
+
     {% if request.user.is_authenticated %}
     {% if request.user.id != object.id %}
         <form action="{% url member-detail object.username %}" method="POST" class="foundry-form">
