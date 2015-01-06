@@ -30,16 +30,20 @@ urlpatterns = patterns('',
     # My friends
     url(
         r'^my-friends/$',
-        login_required(views.my_friends),
-        {'template_name':'friends/my_friends.html'},
+        login_required(
+            views.MyFriends.as_view(template_name='friends/my_friends.html')
+        ),
         name='my-friends'
     ),
 
     # My friend requests
     url(
         r'^my-friend-requests/$',
-        login_required(views.my_friend_requests),
-        {'template_name':'friends/my_friend_requests.html'},
+        login_required(
+            views.MyFriendRequests.as_view(
+                template_name='friends/my_friend_requests.html'
+            )
+        ),
         name='my-friend-requests'
     ),
 
