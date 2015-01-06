@@ -16,29 +16,29 @@
     <div class="meta">
         {% if can_friend %}
             <div class="friend">
-                <a href="{% url friend-request object.id %}">{% trans "Send friend request" %}</a>
+                <a href="{% url "friend-request" object.id %}">{% trans "Send friend request" %}</a>
             </div>
         {% endif %}
         {% if notifications %}
             <div class="notifications">
-                <a href="{% url member-notifications %}">{% trans "Notifications" %} ({{ notifications }})</a>
+                <a href="{% url "member-notifications" %}">{% trans "Notifications" %} ({{ notifications }})</a>
             </div>
         {% endif %}
         {% if request.user.id == object.id %}
             <div class="inbox">
-                <a href="{% url inbox %}">{% trans "Inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
+                <a href="{% url "inbox" %}">{% trans "Inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
             </div>
             <div class="send-message">
-                <a href="{% url send-direct-message %}">{% trans "Send a message" %}</a>
+                <a href="{% url "send-direct-message" %}">{% trans "Send a message" %}</a>
             </div>
             <div class="create-blogpost">
-                <a href="{% url create-blogpost %}">{% trans "Create a blog post" %}</a>
+                <a href="{% url "create-blogpost" %}">{% trans "Create a blog post" %}</a>
             </div>
             <div class="edit-profile">
-                <a href="{% url edit-profile %}">{% trans "Update profile" %}</a>
+                <a href="{% url "edit-profile" %}">{% trans "Update profile" %}</a>
             </div>
             <div class="my-friends">
-                <a href="{% url my-friends %}">{% trans "My friends" %}</a>
+                <a href="{% url "my-friends" %}">{% trans "My friends" %}</a>
             </div>
         {% endif %}
     </div>
@@ -64,7 +64,7 @@
 
     {% if request.user.is_authenticated %}
     {% if request.user.id != object.id %}
-        <form action="{% url member-detail object.username %}" method="POST" class="foundry-form">
+        <form action="{% url "member-detail" object.username %}" method="POST" class="foundry-form">
             {% csrf_token %}
             {{ form.as_div }}
             <div class="buttons">
