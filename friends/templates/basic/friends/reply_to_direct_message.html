@@ -7,14 +7,14 @@
 
 	    <div class="meta">
            <div class="inbox">
-               <a href="{% url inbox %}">{% trans "Back to inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
+               <a href="{% url "inbox" %}">{% trans "Back to inbox" %}{% if unread_messages %} ({{ unread_messages }}){% endif %}</a>
            </div>
            <div class="original-message">
-               <a href="{% url message-view original_message.id %}">{% trans "Back to original message" %}</a>
+               <a href="{% url "message-view" original_message.id %}">{% trans "Back to original message" %}</a>
            </div>
 	    </div>
-    
-        <form action="{% url reply-to-direct-message original_message.id %}" method="POST" class="foundry-form">
+
+        <form action="{% url "reply-to-direct-message" original_message.id %}" method="POST" class="foundry-form">
             {% csrf_token %}
             {{ form.as_div }}
             <div class="buttons">

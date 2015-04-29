@@ -9,10 +9,10 @@
         <p>{{ object.message }}</p>
 
         <div class="message-actions">
-            <a href="{% url reply-to-direct-message object.id %}">{% trans "Reply" %}</a>
+            <a href="{% url "reply-to-direct-message" object.id %}">{% trans "Reply" %}</a>
         </div>
     </div>
-    {% for message in object.replies.all %}  
+    {% for message in object.replies.all %}
         {% direct_message message %}
     {% endfor %}
 </div>

@@ -15,7 +15,7 @@
 	                    <a href="{{ object.member.get_absolute_url }}">{{ object.member.username }}</a>
 	                </div>
 	                <div class="meta">
-	                    <a href="{% url accept-friend-request object.id %}">{% trans "Accept" %}</a>
+	                    <a href="{% url "accept-friend-request" object.id %}">{% trans "Accept" %}</a>
 	                </div>
 	           </div>
 	        {% endfor %}

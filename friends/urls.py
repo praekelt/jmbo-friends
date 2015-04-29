@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url, include
+from django.conf.urls import patterns, url, include
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -30,16 +30,20 @@ urlpatterns = patterns('',
     # My friends
     url(
         r'^my-friends/$',
-        login_required(views.my_friends),
-        {'template_name':'friends/my_friends.html'},
+        login_required(
+            views.MyFriends.as_view(template_name='friends/my_friends.html')
+        ),
         name='my-friends'
     ),
 
     # My friend requests
     url(
         r'^my-friend-requests/$',
-        login_required(views.my_friend_requests),
-        {'template_name':'friends/my_friend_requests.html'},
+        login_required(
+            views.MyFriendRequests.as_view(
+                template_name='friends/my_friend_requests.html'
+            )
+        ),
         name='my-friend-requests'
     ),
 
