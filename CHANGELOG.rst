@@ -1,8 +1,8 @@
 Changelog
 =========
 
-next
-----
+2.0.0a1
+-------
 #. Django 1.6 compatibility. Django 1.4 is not supported anymore.
 
 0.2.4
