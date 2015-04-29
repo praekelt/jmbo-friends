@@ -13,7 +13,7 @@
 	                <a href="{{ friend.get_absolute_url }}">{{ friend.username }}</a>
 	            </div>
 	            <div class="meta">
-	                <a href="{% url friend-request friend.id %}">{% blocktrans %}Friend{% endblocktrans %}</a>
+	                <a href="{% url "friend-request" friend.id %}">{% blocktrans %}Friend{% endblocktrans %}</a>
 	            </div>
 	        </div>
 	    {% endfor %}

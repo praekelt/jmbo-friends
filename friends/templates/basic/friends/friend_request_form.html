@@ -2,13 +2,13 @@
 {% load i18n %}
 
 {% block content %}
-<div class="friend-request-form"> 
+<div class="friend-request-form">
 
     <div class="title">
         {% blocktrans with friend.username as username %}Send friend request to {{ username }}{% endblocktrans %}
     </div>
 
-    <form action="{% url friend-request friend.id %}" method="POST" class="foundry-form">
+    <form action="{% url "friend-request" friend.id %}" method="POST" class="foundry-form">
         {% csrf_token %}
         {{ form.as_div }}
         <div class="buttons">

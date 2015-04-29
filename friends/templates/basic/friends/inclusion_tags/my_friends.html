@@ -9,7 +9,7 @@
 	        <a href="{{ object.get_absolute_url }}">{{ object.username }}</a>
 	    </div>
 	    <div class="meta">
-	        <a href="{% url de-friend object.id %}">{% trans "De-friend" %}</a>
+	        <a href="{% url "de-friend" object.id %}">{% trans "De-friend" %}</a>
 	    </div>
 		{% if object.other_friends %}
 			<div class="friend-finder">
@@ -24,7 +24,7 @@
 				            <a href="{{ friend.get_absolute_url }}">{{ friend.username }}</a>
 				        </div>
 				        <div class="meta">
-				            <a href="{% url friend-request friend.id %}">{% trans "Friend" %}</a>
+				            <a href="{% url "friend-request" friend.id %}">{% trans "Friend" %}</a>
 				        </div>
 			        </div>
 			    {% endfor %}
