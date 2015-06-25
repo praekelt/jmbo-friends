@@ -2,16 +2,16 @@ from setuptools import setup, find_packages
 
 setup(
     name='jmbo-friends',
-    version='2.0.0a1',
+    version='2.0.0',
     description='Friends and badges for Jmbo.',
     long_description = open('README.rst', 'r').read() + open('AUTHORS.rst', 'r').read() + open('CHANGELOG.rst', 'r').read(),
-    author='Praekelt Foundation',
+    author='Praekelt Consulting',
     author_email='dev@praekelt.com',
     license='BSD',
     url='http://github.com/praekelt/jmbo-friends',
     packages = find_packages(),
     install_requires = [
-        'jmbo-foundry',
+        'jmbo-foundry>=2.0.0',
     ],
     include_package_data=True,
     tests_require=[
